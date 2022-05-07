@@ -129,8 +129,23 @@ function deleteBook(e) {
   }
   renderList();
 }
-function editBook() {
-  console.log('edit');
+
+function editBook(e) {
+  newDiv2.innerHTML = '';
+
+  const id = e.target.parentNode.id;
+  const books = JSON.parse(localStorage.getItem(KEY));
+  const book = books.find((b) => b.id === id);
+
+  newDiv2.insertAdjacentHTML('afterbegin', createFormMarkup(book));
+
+  const btnSaveEl = document.querySelector('.btn-save');
+
+  btnSaveEl.addEventListener('click', onBtnSave);
+
+  function onBtnSave() {
+    console.log('Save edited');
+  }
 }
 
 buttonAdd.addEventListener('click', onBtnAdd);
@@ -138,15 +153,15 @@ buttonAdd.addEventListener('click', onBtnAdd);
 function onBtnAdd() {
   newDiv2.innerHTML = '';
 
-  newDiv2.insertAdjacentHTML('afterbegin', createFormMarkup());
-
   const newBook = {
-    id: Date.now(),
+    id: Date.now().toString(),
     author: '',
     title: '',
     img: '',
     plot: '',
   };
+
+  newDiv2.insertAdjacentHTML('afterbegin', createFormMarkup(newBook));
 
   formBookObj(newBook);
 
@@ -164,6 +179,14 @@ function onBtnAdd() {
       oldBookData.push(newBook);
       const booksToSave = JSON.stringify(oldBookData);
       localStorage.setItem(KEY, booksToSave);
+
+      newList.innerHTML = '';
+
+      renderList();
+
+      newDiv2.innerHTML = '';
+
+      newDiv2.insertAdjacentHTML('afterbegin', createPreviewMarkup(newBook));
     }
   }
 }
@@ -180,26 +203,24 @@ function formBookObj(book) {
   }
 }
 
-// const inputName = e.target
-
-function createFormMarkup() {
+function createFormMarkup(book) {
   return `
     <form class="book-form" action="">
       <label>
         Author
-        <input type="text" name="author"/>
+        <input type="text" name="author" value="${book.author}"/>
       </label>
       <label>
         Title
-        <input type="text" name="title"/>
+        <input type="text" name="title" value="${book.title}"/>
       </label>
       <label>
         img url
-        <input type="text" name="img"/>
+        <input type="text" name="img" value="${book.img}"/>
       </label>
       <label>
         Plot
-        <input type="text" name="plot"/>
+        <input type="text" name="plot" value="${book.plot}"/>
       </label>
       <button class="btn btn-save" type="button">Save</button>
     </form>
