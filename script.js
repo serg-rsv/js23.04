@@ -39,7 +39,10 @@ const books = [
   },
 ];
 const KEY = 'books';
-localStorage.setItem(KEY, JSON.stringify(books));
+
+if (!localStorage.getItem(KEY)) {
+  localStorage.setItem(KEY, JSON.stringify(books));
+}
 
 const divRef = document.querySelector('#root');
 
@@ -122,11 +125,13 @@ function deleteBook(e) {
   newList.innerHTML = '';
 
   // const title = newDiv2.children.item
-  const titleToRemove = newDiv2.firstChild.textContent;
+
+  const titleToRemove = newDiv2?.firstChild?.textContent;
   const titleToCheck = books.find((book) => book.id === id).title;
   if (titleToCheck === titleToRemove) {
     newDiv2.innerHTML = '';
   }
+
   renderList();
 }
 
@@ -139,12 +144,28 @@ function editBook(e) {
 
   newDiv2.insertAdjacentHTML('afterbegin', createFormMarkup(book));
 
+  formBookObj(book);
+
   const btnSaveEl = document.querySelector('.btn-save');
 
   btnSaveEl.addEventListener('click', onBtnSave);
 
   function onBtnSave() {
-    console.log('Save edited');
+    const indexOfBook = books.indexOf(book);
+
+    books.splice(indexOfBook, 1, book);
+
+    localStorage.setItem(KEY, JSON.stringify(books));
+
+    newList.innerHTML = '';
+
+    renderList();
+
+    newDiv2.innerHTML = '';
+
+    newDiv2.insertAdjacentHTML('afterbegin', createPreviewMarkup(book));
+
+    setTimeout(() => alert('Book added successful'), 2000);
   }
 }
 
